@@ -1,20 +1,38 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React from "react";
+import { TouchableOpacity, Text } from "react-native";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { useAuthStore } from "./stores/authStore";
+import LoginScreen from "./screens/login";
+import HomeScreen from "./screens/home";
+import RegisterScreen from "./screens/register";
 
-export default function App() {
+const AuthStack = createNativeStackNavigator();
+const AppStack = createNativeStackNavigator();
+
+const App = () => {
+  const isLogin = useAuthStore((state) => state.isLogin); // Access the state
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      {isLogin ? (
+        <AppStack.Navigator
+          initialRouteName="Home"
+          screenOptions={{ headerShown: false }}
+        >
+          <AppStack.Screen name="Home" component={HomeScreen} />
+        </AppStack.Navigator>
+      ) : (
+        <AuthStack.Navigator
+          initialRouteName="Login"
+          screenOptions={{ headerShown: false }}
+        >
+          <AuthStack.Screen name="Login" component={LoginScreen} />
+          <AuthStack.Screen name="Register" component={RegisterScreen} />
+        </AuthStack.Navigator>
+      )}
+    </NavigationContainer>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default App;

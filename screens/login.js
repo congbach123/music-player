@@ -1,0 +1,131 @@
+import React, { useState } from "react";
+import {
+  SafeAreaView,
+  StatusBar,
+  TextInput,
+  Image,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  View,
+} from "react-native";
+import { useAuthStore } from "../stores/authStore";
+import colors from "../styles/colors";
+
+const LoginScreen = ({ navigation }) => {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
+  const login = useAuthStore((state) => state.login);
+
+  const handleLogin = () => {
+    if (username === "A" && password === "A") {
+      login();
+      //navigation.navigate("Home"); no need
+    }
+  };
+  return (
+    <SafeAreaView style={styles.container}>
+      <StatusBar backgroundColor="#be264c" barStyle="light-content" />
+      <View style={styles.root}>
+        <Image
+          style={styles.logo}
+          source={require("../assets/musica-logo.png")}
+          resizeMode="contain"
+        ></Image>
+        <TextInput
+          style={styles.username_input}
+          placeholder="Email or Username"
+          onChangeText={setUsername}
+        ></TextInput>
+        <TextInput
+          style={styles.password_input}
+          placeholder="Password"
+          onChangeText={setPassword}
+        ></TextInput>
+        <TouchableOpacity>
+          <Text style={styles.forgot_pass_text}>Forgot Password?</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.sign_in_btn} onPress={handleLogin}>
+          <Text style={styles.sign_in_btn_text}>Sign In</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.sign_up_btn}
+          onPress={() => navigation.navigate("Register")}
+        >
+          <Text style={styles.sign_up_btn_text}>Sign Up</Text>
+        </TouchableOpacity>
+      </View>
+    </SafeAreaView>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: colors.primary,
+  },
+  root: {
+    padding: 30,
+  },
+  logo: {
+    marginTop: 30,
+    width: "50%",
+    height: "50%",
+    alignSelf: "center",
+  },
+  username_input: {
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: 10,
+    height: 50,
+    padding: 10,
+    marginBottom: 10,
+  },
+  password_input: {
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: 10,
+    height: 50,
+    padding: 10,
+    marginBottom: 10,
+  },
+  forgot_pass_text: {
+    textDecorationLine: "underline",
+    padding: 5,
+    marginTop: 5,
+    textAlign: "right",
+    color: colors.text,
+  },
+  sign_in_btn: {
+    padding: 10,
+    height: 50,
+    backgroundColor: colors.button_primary,
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: 10,
+    marginVertical: 10,
+  },
+  sign_in_btn_text: {
+    textAlign: "center",
+    fontWeight: "bold",
+  },
+  sign_up_btn: {
+    padding: 10,
+    height: 50,
+    backgroundColor: colors.button_primary,
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: 10,
+  },
+  sign_up_btn_text: {
+    textAlign: "center",
+    fontWeight: "bold",
+  },
+});
+
+export default LoginScreen;
