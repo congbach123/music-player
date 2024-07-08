@@ -6,18 +6,18 @@ import {
   StyleSheet,
   View,
 } from "react-native";
-import colors from "../styles/colors";
+import { colors } from "../styles/tokens";
 import { useAuthStore } from "../stores/authStore";
 import TopNavigationBar from "../components/TopNavigationBar";
 
-const HomeScreen = () => {
+const PlaylistScreen = () => {
   const logout = useAuthStore((state) => state.logout);
 
   return (
     <SafeAreaView style={styles.container}>
-      <TopNavigationBar title="Songs" />
+      <TopNavigationBar title="Playlist" />
       <View style={styles.content}>
-        <Text style={styles.welcomeText}>Welcome to the Home Screen!</Text>
+        <Text style={styles.welcomeText}>Welcome to the Playlist Screen!</Text>
         <TouchableOpacity style={styles.logoutBtn} onPress={logout}>
           <Text style={styles.logoutBtnText}>Logout</Text>
         </TouchableOpacity>
@@ -58,4 +58,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HomeScreen;
+export default PlaylistScreen;

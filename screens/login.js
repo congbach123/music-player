@@ -10,7 +10,7 @@ import {
   View,
 } from "react-native";
 import { useAuthStore } from "../stores/authStore";
-import colors from "../styles/colors";
+import { colors } from "../styles/tokens";
 
 const LoginScreen = ({ navigation }) => {
   const [username, setUsername] = useState("");
