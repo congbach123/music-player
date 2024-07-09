@@ -8,7 +8,7 @@ const TopNavigationBar = ({ title }) => {
   const navigation = useNavigation();
 
   const handleSettingsPress = () => {
-    navigation.navigate("Settings");
+    navigation.openDrawer();
   };
 
   return (
