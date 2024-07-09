@@ -1,4 +1,6 @@
 import React from "react";
+import { colors, fontSize } from "../styles/tokens";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
@@ -15,7 +17,11 @@ const TopNavigationBar = ({ title }) => {
         <Text style={styles.title}>{title}</Text>
       </TouchableOpacity>
       <TouchableOpacity onPress={handleSettingsPress}>
-        <Text style={styles.settingsIcon}>Settings</Text>
+        <Ionicons
+          name="settings-outline"
+          size={fontSize.lg}
+          color={colors.background}
+        />
       </TouchableOpacity>
     </View>
   );
@@ -33,12 +39,8 @@ const styles = StyleSheet.create({
     borderBottomColor: "#ccc",
   },
   title: {
-    fontSize: 18,
+    fontSize: fontSize.lg,
     fontWeight: "bold",
-  },
-  settingsIcon: {
-    fontSize: 16,
-    color: "#007bff",
   },
 });
 
