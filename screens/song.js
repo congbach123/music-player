@@ -5,22 +5,35 @@ import {
   TouchableOpacity,
   StyleSheet,
   View,
+  FlatList,
 } from "react-native";
 import { colors } from "../styles/tokens";
 import { useAuthStore } from "../stores/authStore";
 import TopNavigationBar from "../components/TopNavigationBar";
+import SongItem from "../components/SongItem";
+import { useSongStore } from "../stores/songStore";
 
 const SongScreen = () => {
   const logout = useAuthStore((state) => state.logout);
+  const songs = useSongStore((state) => state.songs);
 
+  const handleSongPress = (song) => {
+    console.log(song.id);
+  };
   return (
     <SafeAreaView style={styles.container}>
       <TopNavigationBar title="Songs" />
       <View style={styles.content}>
-        <Text style={styles.welcomeText}>Welcome to the Songs Screen!</Text>
-        <TouchableOpacity style={styles.logoutBtn} onPress={logout}>
-          <Text style={styles.logoutBtnText}>Logout</Text>
-        </TouchableOpacity>
+        <FlatList
+          data={songs}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => (
+            <TouchableOpacity onPress={() => handleSongPress(item)}>
+              <SongItem song={item} />
+            </TouchableOpacity>
+          )}
+          style={styles.listContainer}
+        />
       </View>
     </SafeAreaView>
   );
@@ -30,6 +43,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.primary,
+    padding: 10,
+  },
+  listContainer: {
+    width: "100%",
   },
   content: {
     flex: 1,
