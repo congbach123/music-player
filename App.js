@@ -13,6 +13,7 @@ import PlaylistScreen from "./screens/playlist";
 import HomeTabs from "./screens/homeTabs";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import SettingsScreen from "./screens/setting";
+import SongPlayerScreen from "./screens/songPlayer";
 import CustomDrawerContent from "./screens/setting_test";
 
 const AuthStack = createNativeStackNavigator();
@@ -42,6 +43,10 @@ const App = () => {
           screenOptions={{ headerShown: false }}
         >
           <AppStack.Screen name="Drawer" component={DrawerNavigator} />
+          <AppStack.Screen
+            name="SongPlayerScreen"
+            component={SongPlayerScreen}
+          ></AppStack.Screen>
         </AppStack.Navigator>
       ) : (
         <AuthStack.Navigator

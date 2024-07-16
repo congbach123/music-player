@@ -11,20 +11,21 @@ import { colors } from "../styles/tokens";
 import { useAuthStore } from "../stores/authStore";
 import TopNavigationBar from "../components/TopNavigationBar";
 import SongItem from "../components/SongItem";
+import SongList from "../components/SongList";
 import { useSongStore } from "../stores/songStore";
 
 const SongScreen = () => {
   const logout = useAuthStore((state) => state.logout);
   const songs = useSongStore((state) => state.songs);
 
-  const handleSongPress = (song) => {
-    console.log(song.id);
-  };
+  // const handleSongPress = (song) => {
+  //   console.log(song.id);
+  // };
   return (
     <SafeAreaView style={styles.container}>
       <TopNavigationBar title="Songs" />
       <View style={styles.content}>
-        <FlatList
+        {/* <FlatList
           data={songs}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
@@ -33,7 +34,8 @@ const SongScreen = () => {
             </TouchableOpacity>
           )}
           style={styles.listContainer}
-        />
+        /> */}
+        <SongList songs={songs}></SongList>
       </View>
     </SafeAreaView>
   );

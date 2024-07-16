@@ -1,16 +1,18 @@
 import React from "react";
-import { View, Text, Image, StyleSheet } from "react-native";
+import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { colors, fontSize } from "../styles/tokens";
 
-const SongItem = ({ song }) => {
+const SongItem = ({ song, handleSongPress }) => {
   return (
-    <View style={styles.container}>
-      <Image source={{ uri: song.image }} style={styles.image} />
-      <View style={styles.info}>
-        <Text style={styles.name}>{song.name}</Text>
-        <Text style={styles.artist}>{song.artist}</Text>
+    <TouchableOpacity onPress={() => handleSongPress(song)}>
+      <View style={styles.container}>
+        <Image source={{ uri: song.image }} style={styles.image} />
+        <View style={styles.info}>
+          <Text style={styles.name}>{song.name}</Text>
+          <Text style={styles.artist}>{song.artist}</Text>
+        </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
