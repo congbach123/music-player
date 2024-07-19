@@ -1,5 +1,6 @@
+// src/stores/songStore.js
+
 import { create } from "zustand";
-//import TrackPlayer, { Capability } from "react-native-track-player";
 import { Audio } from "expo-av";
 
 export const useSongStore = create((set, get) => ({
@@ -27,32 +28,74 @@ export const useSongStore = create((set, get) => ({
     },
   ],
 
-  addSong: (song) => set((state) => ({ songs: [...state.songs, song] })),
-  removeSong: (id) =>
-    set((state) => ({ songs: state.songs.filter((song) => song.id !== id) })),
+  currentSongIndex: -1,
+  isPlaying: false,
+  playbackInstance: null,
 
-  currentSong: null,
-  setCurrentSong: (song) => set({ currentSong: song }),
-  playSong: async (song) => {
+  playSong: async (index) => {
+    const { songs, playbackInstance } = get();
+
     try {
-      const { sound } = await Audio.Sound.createAsync(song.url);
-      await sound.playAsync();
-      set({ currentSong: { ...song, sound } });
+      if (playbackInstance) {
+        await playbackInstance.unloadAsync();
+      }
+
+      const { sound, status } = await Audio.Sound.createAsync(
+        songs[index].url,
+        {
+          shouldPlay: true,
+        }
+      );
+
+      sound.setOnPlaybackStatusUpdate((status) => {
+        if (status.didJustFinish) {
+          const nextIndex = index + 1;
+          if (nextIndex < songs.length) {
+            set({ currentSongIndex: nextIndex });
+            get().playSong(nextIndex);
+          } else {
+            set({ currentSongIndex: -1, isPlaying: false });
+          }
+        }
+      });
+
+      set({
+        playbackInstance: sound,
+        currentSongIndex: index,
+        isPlaying: true,
+      });
     } catch (error) {
       console.error("Error playing song:", error);
     }
   },
 
-  stopSong: async () => {
-    try {
-      const { currentSong } = get();
-      if (currentSong && currentSong.sound) {
-        await currentSong.sound.stopAsync();
-        await currentSong.sound.unloadAsync();
-      }
-      set({ currentSong: null });
-    } catch (error) {
-      console.error("Error stopping song:", error);
+  pauseSong: async () => {
+    const { playbackInstance } = get();
+    if (playbackInstance) {
+      await playbackInstance.pauseAsync();
+      set({ isPlaying: false });
     }
+  },
+
+  resumeSong: async () => {
+    const { playbackInstance } = get();
+    if (playbackInstance) {
+      await playbackInstance.playAsync();
+      set({ isPlaying: true });
+    }
+  },
+
+  stopSong: async () => {
+    const { playbackInstance } = get();
+    if (playbackInstance) {
+      await playbackInstance.stopAsync();
+      await playbackInstance.unloadAsync();
+      set({ playbackInstance: null, currentSongIndex: -1, isPlaying: false });
+    }
+  },
+
+  getCurrentSong: () => {
+    const { currentSongIndex, songs } = get();
+    return currentSongIndex !== -1 ? songs[currentSongIndex] : null;
   },
 }));
