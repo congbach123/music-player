@@ -15,6 +15,12 @@ import { colors } from "../styles/tokens";
 import TopNavigationBar from "../components/TopNavigationBar";
 import { useSongStore } from "../stores/songStore";
 
+const formatTime = (millis) => {
+  const minutes = Math.floor(millis / 60000);
+  const seconds = Math.floor((millis % 60000) / 1000);
+  return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+};
+
 const SongPlayerScreen = () => {
   const route = useRoute();
   const { song } = route.params;
@@ -26,8 +32,11 @@ const SongPlayerScreen = () => {
     getCurrentSong,
     isPlaying,
     playbackInstance,
+    previousSong,
+    nextSong,
   } = useSongStore();
   const [status, setStatus] = useState(null);
+
   useEffect(() => {
     const currentSong = getCurrentSong();
 
@@ -37,15 +46,23 @@ const SongPlayerScreen = () => {
     }
 
     return () => {
+      console.log("SongPlayerScreen unmounted");
       stopSong(); // Stop song when component remove or navigate away
     };
   }, [song, playSong, stopSong, getCurrentSong]);
+
+  useEffect(() => {
+    if (status && status.didJustFinish) {
+      nextSong();
+    }
+  }, [status]);
 
   useEffect(() => {
     if (playbackInstance) {
       playbackInstance.setOnPlaybackStatusUpdate(setStatus);
     }
   }, [playbackInstance]);
+
   const handlePlayPause = () => {
     if (isPlaying) {
       pauseSong();
@@ -61,6 +78,20 @@ const SongPlayerScreen = () => {
     }
   };
 
+  // const handleNextSong = () => {
+  //   const currentSongIndex = getCurrentSong()?.id - 1;
+  //   const nextIndex =
+  //     currentSongIndex + 1 >= songs.length ? 0 : currentSongIndex + 1;
+  //   playSong(nextIndex);
+  // };
+
+  // const handlePreviousSong = () => {
+  //   const currentSongIndex = getCurrentSong()?.id - 1;
+  //   const prevIndex =
+  //     currentSongIndex - 1 < 0 ? songs.length - 1 : currentSongIndex - 1;
+  //   playSong(prevIndex);
+  // };
+
   const currentSong = getCurrentSong();
 
   if (!currentSong) {
@@ -74,14 +105,25 @@ const SongPlayerScreen = () => {
         <Image source={{ uri: currentSong.image }} style={styles.image} />
         <Text style={styles.text}>Song: {currentSong.name}</Text>
         <Text style={styles.text}>Artist: {currentSong.artist}</Text>
-        <Slider
-          style={styles.slider}
-          value={status?.positionMillis / 1000 || 0}
-          minimumValue={0}
-          maximumValue={status?.durationMillis / 1000 || 1}
-          onValueChange={handleSliderValueChange}
-        />
+        <View style={styles.sliderContainer}>
+          <Text style={styles.timestamp}>
+            {formatTime(status?.positionMillis || 0)}
+          </Text>
+          <Slider
+            style={styles.slider}
+            value={status?.positionMillis / 1000 || 0}
+            minimumValue={0}
+            maximumValue={status?.durationMillis / 1000 || 1}
+            onValueChange={handleSliderValueChange}
+          />
+          <Text style={styles.timestamp}>
+            {formatTime(status?.durationMillis || 0)}
+          </Text>
+        </View>
         <View style={styles.controls}>
+          <TouchableOpacity onPress={previousSong} style={styles.controlButton}>
+            <Text style={styles.controlText}>Previous</Text>
+          </TouchableOpacity>
           <TouchableOpacity
             onPress={handlePlayPause}
             underlayColor="transparent"
@@ -94,6 +136,9 @@ const SongPlayerScreen = () => {
           </TouchableOpacity>
           <TouchableOpacity onPress={stopSong} underlayColor="transparent">
             <Text style={styles.controlText}>Stop</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={nextSong} style={styles.controlButton}>
+            <Text style={styles.controlText}>Next</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -121,6 +166,12 @@ const styles = StyleSheet.create({
     fontSize: 24,
     color: colors.text,
   },
+  sliderContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    width: "80%",
+    marginVertical: 10,
+  },
   slider: {
     width: "80%",
     height: 40,
@@ -131,6 +182,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginTop: 20,
+  },
+  controlButton: {
+    marginHorizontal: 10,
   },
   controlText: {
     fontSize: 18,

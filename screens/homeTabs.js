@@ -7,6 +7,8 @@ import SongScreen from "./song";
 import PlaylistScreen from "./playlist";
 import FavoriteScreen from "./favorite";
 import ArtistScreen from "./artist";
+import { FloatingPlayer } from "../components/FloatingPlayer";
+import { View } from "react-native";
 
 const Tab = createBottomTabNavigator();
 
@@ -19,24 +21,28 @@ const iconMap = {
 
 const HomeTabs = () => {
   return (
-    <Tab.Navigator
-      initialRouteName="Songs"
-      screenOptions={({ route }) => ({
-        tabBarIcon: ({ focused, color, size }) => {
-          const [iconNameInactive, iconNameActive] = iconMap[route.name];
-          const iconName = focused ? iconNameActive : iconNameInactive;
-          return <Ionicons name={iconName} size={size} color={color} />;
-        },
-        tabBarActiveTintColor: colors.button_primary,
-        tabBarInactiveTintColor: colors.background,
-        headerShown: false,
-      })}
-    >
-      <Tab.Screen name="Songs" component={SongScreen} />
-      <Tab.Screen name="Playlist" component={PlaylistScreen} />
-      <Tab.Screen name="Favorites" component={FavoriteScreen} />
-      <Tab.Screen name="Artist" component={ArtistScreen} />
-    </Tab.Navigator>
+    <View style={{ flex: 1 }}>
+      <Tab.Navigator
+        initialRouteName="Songs"
+        screenOptions={({ route }) => ({
+          tabBarIcon: ({ focused, color, size }) => {
+            const [iconNameInactive, iconNameActive] = iconMap[route.name];
+            const iconName = focused ? iconNameActive : iconNameInactive;
+            return <Ionicons name={iconName} size={size} color={color} />;
+          },
+          tabBarActiveTintColor: colors.button_primary,
+          tabBarInactiveTintColor: colors.background,
+          headerShown: false,
+        })}
+      >
+        <Tab.Screen name="Songs" component={SongScreen} />
+        <Tab.Screen name="Playlist" component={PlaylistScreen} />
+        <Tab.Screen name="Favorites" component={FavoriteScreen} />
+        <Tab.Screen name="Artist" component={ArtistScreen} />
+      </Tab.Navigator>
+
+      <FloatingPlayer />
+    </View>
   );
 };
 

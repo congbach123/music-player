@@ -15,6 +15,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import SettingsScreen from "./screens/setting";
 import SongPlayerScreen from "./screens/songPlayer";
 import CustomDrawerContent from "./screens/setting_test";
+import { FloatingPlayer } from "./components/FloatingPlayer";
 
 const AuthStack = createNativeStackNavigator();
 const AppStack = createNativeStackNavigator();
@@ -22,32 +23,37 @@ const Drawer = createDrawerNavigator();
 
 const DrawerNavigator = () => {
   return (
-    <Drawer.Navigator
-      drawerContent={(props) => <CustomDrawerContent {...props} />}
-      initialRouteName="HomeTabs"
-      screenOptions={{ headerShown: false, drawerPosition: "right" }}
-    >
-      <Drawer.Screen name="HomeTabs" component={HomeTabs} />
-    </Drawer.Navigator>
+    <>
+      <Drawer.Navigator
+        drawerContent={(props) => <CustomDrawerContent {...props} />}
+        initialRouteName="HomeTabs"
+        screenOptions={{ headerShown: false, drawerPosition: "right" }}
+      >
+        <Drawer.Screen name="HomeTabs" component={HomeTabs} />
+      </Drawer.Navigator>
+    </>
   );
 };
 
 const App = () => {
-  const isLogin = useAuthStore((state) => state.isLogin); // Access the state
+  const isLogin = useAuthStore((state) => state.isLogin);
 
   return (
     <NavigationContainer>
       {isLogin ? (
-        <AppStack.Navigator
-          initialRouteName="Drawer"
-          screenOptions={{ headerShown: false }}
-        >
-          <AppStack.Screen name="Drawer" component={DrawerNavigator} />
-          <AppStack.Screen
-            name="SongPlayerScreen"
-            component={SongPlayerScreen}
-          ></AppStack.Screen>
-        </AppStack.Navigator>
+        <>
+          <AppStack.Navigator
+            initialRouteName="Drawer"
+            screenOptions={{ headerShown: false }}
+          >
+            <AppStack.Screen name="Drawer" component={DrawerNavigator} />
+            <AppStack.Screen
+              name="SongPlayerScreen"
+              component={SongPlayerScreen}
+            ></AppStack.Screen>
+          </AppStack.Navigator>
+          {/* <FloatingPlayer /> */}
+        </>
       ) : (
         <AuthStack.Navigator
           initialRouteName="Login"

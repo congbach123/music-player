@@ -17,14 +17,14 @@ export const useSongStore = create((set, get) => ({
       name: "Song 2",
       artist: "Artist 2",
       image: "https://i.scdn.co/image/ab6761610000e5ebae678a70cd3899b2167026ea",
-      url: require("../assets/songs/song-1.mp3"),
+      url: require("../assets/songs/song-2.mp3"),
     },
     {
       id: 3,
       name: "Song 3",
       artist: "Artist 3",
       image: "https://i.scdn.co/image/ab6761610000e5ebb97791c136d7354ad7792555",
-      url: require("../assets/songs/song-1.mp3"),
+      url: require("../assets/songs/song-3.mp3"),
     },
   ],
 
@@ -48,14 +48,12 @@ export const useSongStore = create((set, get) => ({
       );
 
       sound.setOnPlaybackStatusUpdate((status) => {
+        console.log("this runs");
         if (status.didJustFinish) {
-          const nextIndex = index + 1;
-          if (nextIndex < songs.length) {
-            set({ currentSongIndex: nextIndex });
-            get().playSong(nextIndex);
-          } else {
-            set({ currentSongIndex: -1, isPlaying: false });
-          }
+          const nextIndex =
+            currentSongIndex + 1 >= songs.length ? 0 : currentSongIndex + 1;
+          playSong(nextIndex);
+          console.log("this runs2");
         }
       });
 
@@ -93,7 +91,19 @@ export const useSongStore = create((set, get) => ({
       set({ playbackInstance: null, currentSongIndex: -1, isPlaying: false });
     }
   },
+  nextSong: () => {
+    const { currentSongIndex, songs, playSong } = get();
+    const nextIndex =
+      currentSongIndex + 1 >= songs.length ? 0 : currentSongIndex + 1;
+    playSong(nextIndex);
+  },
 
+  previousSong: () => {
+    const { currentSongIndex, songs, playSong } = get();
+    const prevIndex =
+      currentSongIndex - 1 < 0 ? songs.length - 1 : currentSongIndex - 1;
+    playSong(prevIndex);
+  },
   getCurrentSong: () => {
     const { currentSongIndex, songs } = get();
     return currentSongIndex !== -1 ? songs[currentSongIndex] : null;
