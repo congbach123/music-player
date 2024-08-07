@@ -34,8 +34,10 @@ const SongPlayerScreen = () => {
     playbackInstance,
     previousSong,
     nextSong,
+    status,
+    setStatus,
   } = useSongStore();
-  const [status, setStatus] = useState(null);
+  // const [status, setStatus] = useState(null);
 
   useEffect(() => {
     const currentSong = getCurrentSong();
@@ -45,10 +47,10 @@ const SongPlayerScreen = () => {
       playSong(song.id - 1);
     }
 
-    return () => {
-      console.log("SongPlayerScreen unmounted");
-      stopSong(); // Stop song when component remove or navigate away
-    };
+    // return () => {
+    //   console.log("SongPlayerScreen unmounted");
+    //   stopSong(); // Stop song when component remove or navigate away
+    // };
   }, [song, playSong, stopSong, getCurrentSong]);
 
   useEffect(() => {
@@ -103,8 +105,8 @@ const SongPlayerScreen = () => {
       <TopNavigationBar title="Now Playing" />
       <View style={styles.content}>
         <Image source={{ uri: currentSong.image }} style={styles.image} />
-        <Text style={styles.text}>Song: {currentSong.name}</Text>
-        <Text style={styles.text}>Artist: {currentSong.artist}</Text>
+        <Text style={styles.text}>{currentSong.name}</Text>
+        <Text style={styles.text}>{currentSong.artist}</Text>
         <View style={styles.sliderContainer}>
           <Text style={styles.timestamp}>
             {formatTime(status?.positionMillis || 0)}

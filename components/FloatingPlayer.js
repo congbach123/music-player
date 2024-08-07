@@ -1,29 +1,42 @@
 import { useEffect, useState } from "react";
 import { StyleSheet, TouchableOpacity, View, Text, Image } from "react-native";
+import Slider from "@react-native-community/slider";
 import { useNavigation } from "@react-navigation/native";
 import { useSongStore } from "../stores/songStore";
+import * as tokens from "../styles/tokens";
+import transparentThumb from "../assets/thumb.png";
 
 export const FloatingPlayer = () => {
   const navigation = useNavigation(); // Get the navigation object
-  const { isPlaying, getCurrentSong } = useSongStore((state) => ({
-    isPlaying: state.isPlaying,
-    getCurrentSong: state.getCurrentSong,
-  }));
-  const [visible, setVisible] = useState(true);
+  const { isPlaying, getCurrentSong, playbackInstance, status, setStatus } =
+    useSongStore();
+  // (state) => ({
+  //   isPlaying: state.isPlaying,
+  //   getCurrentSong: state.getCurrentSong,
+  // })
 
+  const [visible, setVisible] = useState(true);
+  // const [status, setStatus] = useState(null);
   useEffect(() => {
     console.log("FloatingPlayer is rendered");
   }, []);
 
   useEffect(() => {
     const currentSong = getCurrentSong();
-    setVisible(isPlaying && currentSong);
+    setVisible(isPlaying || currentSong);
   }, [isPlaying, getCurrentSong]);
+
+  useEffect(() => {
+    if (playbackInstance) {
+      console.log("Setting onPlaybackStatusUpdate");
+      playbackInstance.setOnPlaybackStatusUpdate(setStatus);
+    }
+  }, [playbackInstance]);
 
   const displayedTrack = getCurrentSong();
 
   const handlePress = () => {
-    navigation.navigate("SongPlayerScreen");
+    navigation.navigate("SongPlayerScreen", { song: displayedTrack });
   };
 
   if (!visible || !displayedTrack) return null;
@@ -40,14 +53,29 @@ export const FloatingPlayer = () => {
       />
 
       <View style={styles.trackTitleContainer}>
-        <Text
-          style={styles.trackTitle}
-          text={displayedTrack.name ?? ""}
-          animationThreshold={25}
-        />
+        <Text style={styles.trackTitle}>
+          {displayedTrack.name ?? "Unknown Track"}
+        </Text>
+        <Text style={styles.trackTitle}>
+          {displayedTrack.artist ?? "Unknown Track"}
+        </Text>
       </View>
 
       <View style={styles.trackControlsContainer}></View>
+      <Slider
+        style={styles.slider}
+        value={status?.positionMillis / 1000 || 0}
+        minimumValue={0}
+        maximumValue={status?.durationMillis / 1000 || 1}
+        // to make this slider untouchable
+        onSlidingStart={() => {}}
+        onSlidingComplete={() => {}}
+        //
+        thumbImage={transparentThumb} //hack to remove the thumb
+        minimumTrackTintColor="#FFFFFF"
+        maximumTrackTintColor="#FFFFFF"
+        // onValueChange={handleSliderValueChange}
+      />
     </TouchableOpacity>
   );
 };
@@ -56,12 +84,13 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#252525",
+    backgroundColor: tokens.colors.background,
     padding: 8,
-    borderRadius: 12,
+    margin: 10,
+    borderRadius: 8,
     paddingVertical: 10,
     position: "absolute",
-    bottom: 0,
+    bottom: 50,
     left: 0,
     right: 0,
     elevation: 10,
@@ -78,9 +107,10 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   trackTitle: {
-    fontSize: 18,
+    fontSize: tokens.fontSize.xsm,
     fontWeight: "600",
     paddingLeft: 10,
+    color: "#fff",
   },
   trackControlsContainer: {
     flexDirection: "row",
@@ -88,5 +118,12 @@ const styles = StyleSheet.create({
     columnGap: 20,
     marginRight: 16,
     paddingLeft: 16,
+  },
+  slider: {
+    position: "absolute",
+    width: "109%",
+    height: 40,
+    bottom: -19,
+    left: -8,
   },
 });
