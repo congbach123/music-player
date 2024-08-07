@@ -7,7 +7,7 @@ import * as tokens from "../styles/tokens";
 import transparentThumb from "../assets/thumb.png";
 
 export const FloatingPlayer = () => {
-  const navigation = useNavigation(); // Get the navigation object
+  const navigation = useNavigation();
   const { isPlaying, getCurrentSong, playbackInstance, status, setStatus } =
     useSongStore();
   // (state) => ({
