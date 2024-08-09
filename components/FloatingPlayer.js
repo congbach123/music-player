@@ -5,11 +5,21 @@ import { useNavigation } from "@react-navigation/native";
 import { useSongStore } from "../stores/songStore";
 import * as tokens from "../styles/tokens";
 import transparentThumb from "../assets/thumb.png";
+import { Ionicons } from "@expo/vector-icons";
+import { pause } from "react-native-track-player/lib/src/trackPlayer";
 
 export const FloatingPlayer = () => {
   const navigation = useNavigation();
-  const { isPlaying, getCurrentSong, playbackInstance, status, setStatus } =
-    useSongStore();
+  const {
+    isPlaying,
+    getCurrentSong,
+    playbackInstance,
+    status,
+    setStatus,
+    pauseSong,
+    resumeSong,
+    nextSong,
+  } = useSongStore();
   // (state) => ({
   //   isPlaying: state.isPlaying,
   //   getCurrentSong: state.getCurrentSong,
@@ -39,6 +49,18 @@ export const FloatingPlayer = () => {
     navigation.navigate("SongPlayerScreen", { song: displayedTrack });
   };
 
+  const handlePlayPause = () => {
+    if (isPlaying) {
+      pauseSong();
+    } else {
+      resumeSong();
+    }
+  };
+
+  const handleNext = () => {
+    nextSong();
+  };
+
   if (!visible || !displayedTrack) return null;
 
   return (
@@ -53,15 +75,29 @@ export const FloatingPlayer = () => {
       />
 
       <View style={styles.trackTitleContainer}>
-        <Text style={styles.trackTitle}>
+        <Text style={styles.trackTitle} numberOfLines={1}>
           {displayedTrack.name ?? "Unknown Track"}
         </Text>
-        <Text style={styles.trackTitle}>
+        <Text style={styles.trackArtist}>
           {displayedTrack.artist ?? "Unknown Track"}
         </Text>
       </View>
 
-      <View style={styles.trackControlsContainer}></View>
+      <View style={styles.trackControlsContainer}>
+        <TouchableOpacity
+          onPress={handlePlayPause}
+          style={styles.controlButton}
+        >
+          <Ionicons
+            name={isPlaying ? "pause" : "play"}
+            size={24}
+            color="#FFFFFF"
+          />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={handleNext} style={styles.controlButton}>
+          <Ionicons name="play-skip-forward" size={24} color="#FFFFFF" />
+        </TouchableOpacity>
+      </View>
       <Slider
         style={styles.slider}
         value={status?.positionMillis / 1000 || 0}
@@ -111,13 +147,24 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     paddingLeft: 10,
     color: "#fff",
+    fontFamily: tokens.fontFamily.bold,
+  },
+  trackArtist: {
+    fontSize: tokens.fontSize.xs,
+    fontWeight: "600",
+    paddingLeft: 10,
+    color: "#fff",
+    fontFamily: tokens.fontFamily.medium,
   },
   trackControlsContainer: {
     flexDirection: "row",
     alignItems: "center",
-    columnGap: 20,
+    columnGap: 5,
     marginRight: 16,
     paddingLeft: 16,
+  },
+  controlButton: {
+    padding: 8,
   },
   slider: {
     position: "absolute",

@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { colors, fontSize } from "../styles/tokens";
+import * as tokens from "../styles/tokens";
 
 const SongItem = ({ song, handleSongPress }) => {
   return (
@@ -35,12 +36,13 @@ const styles = StyleSheet.create({
   },
   name: {
     fontSize: fontSize.md,
-    fontWeight: "bold",
     color: colors.text,
+    fontFamily: tokens.fontFamily.bold,
   },
   artist: {
-    fontSize: fontSize.sm,
+    fontSize: fontSize.xs,
     color: colors.text_secondary,
+    fontFamily: tokens.fontFamily.medium,
   },
 });
 

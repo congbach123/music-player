@@ -7,7 +7,7 @@ export const useSongStore = create((set, get) => ({
   songs: [
     {
       id: 1,
-      name: "Lần Cuối",
+      name: "LẦN CUỐI (đi bên em xót xa người ơi)",
       artist: "Ngọt",
       image: "https://i.scdn.co/image/ab6761610000e5eb66e0a040a53996e8bf19f9b5",
       url: require("../assets/songs/song-1.mp3"),

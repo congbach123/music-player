@@ -45,7 +45,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.primary,
-    padding: 10,
   },
   listContainer: {
     width: "100%",
@@ -54,6 +53,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    marginHorizontal: 10,
   },
   welcomeText: {
     fontSize: 24,

@@ -15,6 +15,11 @@ export const fontSize = {
   base: 20,
   lg: 24,
 };
+export const fontFamily = {
+  medium: "Gotham-Regular",
+  bold: "Gotham-Bold",
+  black: "Gotham-Black",
+};
 
 export const screenPadding = {
   horizontal: 24,

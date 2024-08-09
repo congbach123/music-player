@@ -14,6 +14,8 @@ import Slider from "@react-native-community/slider";
 import { colors } from "../styles/tokens";
 import TopNavigationBar from "../components/TopNavigationBar";
 import { useSongStore } from "../stores/songStore";
+import * as tokens from "../styles/tokens";
+import { Ionicons } from "@expo/vector-icons";
 
 const formatTime = (millis) => {
   const minutes = Math.floor(millis / 60000);
@@ -104,43 +106,51 @@ const SongPlayerScreen = () => {
     <SafeAreaView style={styles.container}>
       <TopNavigationBar title="Now Playing" />
       <View style={styles.content}>
-        <Image source={{ uri: currentSong.image }} style={styles.image} />
-        <Text style={styles.text}>{currentSong.name}</Text>
-        <Text style={styles.text}>{currentSong.artist}</Text>
-        <View style={styles.sliderContainer}>
-          <Text style={styles.timestamp}>
-            {formatTime(status?.positionMillis || 0)}
+        <View style={styles.imageContainer}>
+          <Image source={{ uri: currentSong.image }} style={styles.image} />
+        </View>
+        <View style={styles.textContainer}>
+          <Text style={styles.title} numberOfLines={1} ellipsizeMode="tail">
+            {currentSong.name}
           </Text>
+          <Text style={styles.artist} numberOfLines={1}>
+            {currentSong.artist}
+          </Text>
+        </View>
+        <View style={styles.sliderContainer}>
           <Slider
             style={styles.slider}
             value={status?.positionMillis / 1000 || 0}
             minimumValue={0}
             maximumValue={status?.durationMillis / 1000 || 1}
             onValueChange={handleSliderValueChange}
+            // thumbTintColor="black"
           />
-          <Text style={styles.timestamp}>
-            {formatTime(status?.durationMillis || 0)}
-          </Text>
+          <View style={styles.timestampContainer}>
+            <Text style={styles.timestamp}>
+              {formatTime(status?.positionMillis || 0)}
+            </Text>
+            <Text style={styles.timestamp}>
+              {formatTime(status?.durationMillis || 0)}
+            </Text>
+          </View>
         </View>
         <View style={styles.controls}>
           <TouchableOpacity onPress={previousSong} style={styles.controlButton}>
-            <Text style={styles.controlText}>Previous</Text>
+            <Ionicons name="play-skip-back" size={36}></Ionicons>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={handlePlayPause}
             underlayColor="transparent"
           >
             {isPlaying ? (
-              <Text style={styles.controlText}>Pause</Text>
+              <Ionicons name="pause-circle" size={84}></Ionicons>
             ) : (
-              <Text style={styles.controlText}>Play</Text>
+              <Ionicons name="play-circle" size={84}></Ionicons>
             )}
           </TouchableOpacity>
-          <TouchableOpacity onPress={stopSong} underlayColor="transparent">
-            <Text style={styles.controlText}>Stop</Text>
-          </TouchableOpacity>
           <TouchableOpacity onPress={nextSong} style={styles.controlButton}>
-            <Text style={styles.controlText}>Next</Text>
+            <Ionicons name="play-skip-forward" size={36}></Ionicons>
           </TouchableOpacity>
         </View>
       </View>
@@ -152,41 +162,79 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.primary,
-    padding: 10,
+    // marginHorizontal: 10,
   },
   content: {
     flex: 1,
-    justifyContent: "center",
+    justifyContent: "flex-start",
     alignItems: "center",
+    paddingHorizontal: 25,
+    // backgroundColor: "black",
+    paddingTop: 40,
+  },
+  imageContainer: {
+    width: "100%",
+    aspectRatio: 1,
+    alignItems: "center",
+    borderRadius: 8,
+    elevation: 10,
+    marginBottom: 40,
   },
   image: {
-    width: 200,
-    height: 200,
-    marginBottom: 20,
+    width: "100%",
+    aspectRatio: 1,
+    // marginBottom: 20,
+    borderRadius: 8,
   },
-  text: {
-    fontSize: 24,
+  textContainer: {
+    width: "100%",
+    alignItems: "flex-start",
+    // backgroundColor: "black",
+  },
+  title: {
+    fontSize: tokens.fontSize.base,
     color: colors.text,
+    fontFamily: tokens.fontFamily.black,
+    overflow: "hidden",
+    height: 32,
+  },
+  artist: {
+    fontSize: tokens.fontSize.sm,
+    color: colors.text,
+    fontFamily: tokens.fontFamily.medium,
   },
   sliderContainer: {
-    flexDirection: "row",
+    flexDirection: "column",
     alignItems: "center",
-    width: "80%",
-    marginVertical: 10,
+    width: "100%",
+    marginVertical: 0,
+    // backgroundColor: "black",
   },
   slider: {
-    width: "80%",
+    width: "109%",
     height: 40,
-    marginTop: 20,
+    marginTop: 15,
+    marginBottom: -12,
   },
+  timestampContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
+    marginHorizontal: -10,
+  },
+  timestamp: {
+    fontSize: tokens.fontSize.xs,
+    color: colors.text,
+  },
+
   controls: {
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 20,
+    marginTop: 0,
   },
   controlButton: {
-    marginHorizontal: 10,
+    marginHorizontal: 24,
   },
   controlText: {
     fontSize: 18,
