@@ -43,7 +43,6 @@ const SongPlayerScreen = () => {
 
   useEffect(() => {
     const currentSong = getCurrentSong();
-
     // Only play the song if it not already or new song
     if (!currentSong || currentSong.id !== song.id) {
       playSong(song.id - 1);

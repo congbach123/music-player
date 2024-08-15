@@ -2,8 +2,19 @@ import React from "react";
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { colors, fontSize } from "../styles/tokens";
 import * as tokens from "../styles/tokens";
+import { useNavigation } from "@react-navigation/native";
+import { useSongStore } from "../stores/songStore";
 
-const SongItem = ({ song, handleSongPress }) => {
+const SongItem = ({ song }) => {
+  const navigation = useNavigation();
+  const { playSong } = useSongStore();
+
+  const handleSongPress = (song) => {
+    // navigation.navigate("SongPlayerScreen", { song });
+
+    playSong(song.id - 1);
+  };
+
   return (
     <TouchableOpacity onPress={() => handleSongPress(song)}>
       <View style={styles.container}>

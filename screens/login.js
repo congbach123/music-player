@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   SafeAreaView,
   StatusBar,
@@ -11,17 +11,124 @@ import {
 } from "react-native";
 import { useAuthStore } from "../stores/authStore";
 import { colors } from "../styles/tokens";
+import * as AuthSession from "expo-auth-session";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as Linking from "expo-linking";
+
+const CLIENT_ID = "1d932a3c9e8e419cbea771f033e32043";
+const REDIRECT_URI = "exp://192.168.100.11:8081/--/callback";
+const CLIENT_SECRET = "b8e1e29b4bfe4524b79323fce69a792f";
+const AUTH_URL =
+  `https://accounts.spotify.com/authorize?` +
+  `client_id=${CLIENT_ID}&` +
+  `response_type=code&` +
+  `redirect_uri=${encodeURIComponent(REDIRECT_URI)}&` +
+  `scope=${encodeURIComponent(
+    "streaming user-read-email user-read-recently-played user-top-read playlist-read-private playlist-read-collaborative playlist-modify-public"
+  )}`;
 
 const LoginScreen = ({ navigation }) => {
+  const discovery = {
+    authorizationEndpoint: "https://accounts.spotify.com/authorize",
+    tokenEndpoint: "https://accounts.spotify.com/api/token",
+  };
+
+  const [request, response, promptAsync] = AuthSession.useAuthRequest(
+    {
+      clientId: CLIENT_ID,
+      clientSecret: CLIENT_SECRET,
+      redirectUri: REDIRECT_URI,
+      scopes: [
+        "streaming",
+        "user-read-email",
+        "user-library-read",
+        "user-read-recently-played",
+        "user-top-read",
+        "playlist-read-private",
+        "playlist-read-collaborative",
+        "playlist-modify-public",
+      ],
+      responseType: AuthSession.ResponseType.Token,
+      //authorizationEndpoint: "https://accounts.spotify.com/authorize",
+    },
+    discovery
+  );
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
   const login = useAuthStore((state) => state.login);
 
-  const handleLogin = () => {
-    if (username === "A" && password === "A") {
-      login();
-      //navigation.navigate("Home"); no need
+  useEffect(() => {
+    const checkTokenValid = async () => {
+      const accessToken = await AsyncStorage.getItem("token");
+      const expireDate = await AsyncStorage.getItem("expireDate");
+      console.log("accessToken", accessToken);
+      console.log("expireDate", expireDate);
+
+      if (accessToken && expireDate) {
+        if (new Date(parseInt(expireDate)) > new Date()) {
+          //login(); ADD THIS LATER!
+          //navigation.navigate("Home"); replace?
+        } else {
+          AsyncStorage.removeItem("token");
+          AsyncStorage.removeItem("expireDate");
+        }
+      }
+    };
+
+    checkTokenValid();
+  }, []);
+
+  // async function authenticate() {
+  //   const config = {
+  //     issuer: "https://accounts.spotify.com",
+  //     clientId: "1d932a3c9e8e419cbea771f033e32043",
+  //     scopes: [
+  //       "streaming", //
+  //       "user-read-email",
+  //       "user-library-read",
+  //       "user-read-recently-played",
+  //       "user-top-read",
+  //       "playlist-read-private",
+  //       "playlist-read-collaborative",
+  //       "playlist-modify-public",
+  //     ],
+  //     redirectUrl: "exp://localhost:8081/--/callback",
+  //   };
+  //   const result = await AuthSession.startAsync(config);
+  //   console.log(result);
+  //   // need to check token, if token is there then show main directly, else need login
+  //   if (result.accessToken) {
+  //     const expireDate = new Date(result.accessTokenExpirationDate).getTime();
+  //     AsyncStorage.setItem("token", result.accessToken);
+  //     AsyncStorage.setItem("expireDate", expireDate.toString());
+  //     login();
+  //     //navigation.navigate("Home");
+  //   }
+  // }
+
+  useEffect(() => {
+    if (response?.type === "success") {
+      console.log("response", response);
+      const { access_token, expires_in } = response.params;
+      if (access_token) {
+        const expireDate = new Date().getTime() + expires_in * 1000;
+        AsyncStorage.setItem("token", access_token);
+        AsyncStorage.setItem("expireDate", expireDate.toString());
+        login();
+      } else {
+        console.log("No token found");
+      }
+    }
+  }, [response]);
+
+  const handleLogin = async () => {
+    if (request) {
+      console.log("Prompting auth request...");
+      await promptAsync(); // Trigger the authentication process
+    } else {
+      console.error("Auth request is not initialized");
     }
   };
   return (
