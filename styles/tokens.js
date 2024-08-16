@@ -6,6 +6,11 @@ export const colors = {
   background: "#31363F",
   button_primary: "#93DEFF",
   button_secondary: "#DFF5FF",
+  spotify_green: "#1DB954",
+  spotify_darkBackground: "#121212",
+  spotify_darkGray: "#2a2a2a",
+  spotify_gray: "#B3B3B3",
+  spotify_white: "#ffffff",
 };
 
 export const fontSize = {

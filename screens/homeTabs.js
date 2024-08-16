@@ -9,6 +9,7 @@ import FavoriteScreen from "./favorite";
 import ArtistScreen from "./artist";
 import { FloatingPlayer } from "../components/FloatingPlayer";
 import { View } from "react-native";
+import HomeScreen from "./homeScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -17,6 +18,7 @@ const iconMap = {
   Playlist: ["list-outline", "list"],
   Favorites: ["heart-outline", "heart"],
   Artist: ["person-outline", "person"],
+  Home: ["home-outline", "home-sharp"],
 };
 
 const HomeTabs = () => {
@@ -35,8 +37,8 @@ const HomeTabs = () => {
           headerShown: false,
         })}
       >
+        <Tab.Screen name="Home" component={HomeScreen} />
         <Tab.Screen name="Songs" component={SongScreen} />
-        <Tab.Screen name="Playlist" component={PlaylistScreen} />
         <Tab.Screen name="Favorites" component={FavoriteScreen} />
         <Tab.Screen name="Artist" component={ArtistScreen} />
       </Tab.Navigator>

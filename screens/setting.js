@@ -1,12 +1,14 @@
 import React from "react";
 import { View, Text, Button, StyleSheet, TouchableOpacity } from "react-native";
 import { useAuthStore } from "../stores/authStore";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const SettingsScreen = ({ navigation }) => {
   const logout = useAuthStore((state) => state.logout);
 
   const handleLogout = () => {
     logout();
+
     //navigation.navigate("Login");
   };
 

@@ -68,7 +68,7 @@ const LoginScreen = ({ navigation }) => {
 
       if (accessToken && expireDate) {
         if (new Date(parseInt(expireDate)) > new Date()) {
-          //login(); ADD THIS LATER!
+          login(); //ADD THIS LATER!
           //navigation.navigate("Home"); replace?
         } else {
           AsyncStorage.removeItem("token");
