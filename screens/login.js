@@ -16,7 +16,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Linking from "expo-linking";
 
 const CLIENT_ID = "1d932a3c9e8e419cbea771f033e32043";
-const REDIRECT_URI = "exp://192.168.100.11:8081/--/callback";
+const REDIRECT_URI = "exp://192.168.0.46:8081/--/callback";
 const CLIENT_SECRET = "b8e1e29b4bfe4524b79323fce69a792f";
 const AUTH_URL =
   `https://accounts.spotify.com/authorize?` +
@@ -76,7 +76,6 @@ const LoginScreen = ({ navigation }) => {
         }
       }
     };
-
     checkTokenValid();
   }, []);
 

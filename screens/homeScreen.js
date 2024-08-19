@@ -26,6 +26,13 @@ import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
 import FeaturedPlaylistCard from "../components/FeaturedPlaylistCard";
 import RecommendationCard from "../components/RecommendationCard";
 import { useNavigation } from "@react-navigation/native";
+import {
+  fetchProfile,
+  fetchRecentlyPlayedTracks,
+  getTopArtists,
+  getFeaturedPlaylists,
+  getRecommendations,
+} from "../services/apiController";
 
 const HomeScreen = () => {
   const [userProfile, setUserProfile] = useState();
@@ -33,126 +40,68 @@ const HomeScreen = () => {
   const [topArtists, setTopArtists] = useState([]);
   const [featuredPlaylists, setFeaturedPlaylists] = useState([]);
   const [recommendedTracks, setRecommendedTracks] = useState([]);
+
+  const { playSong } = useSongStore();
   const navigation = useNavigation();
+
   useEffect(() => {
-    const fetchProfile = async () => {
+    const loadProfile = async () => {
       try {
-        const accessToken = await AsyncStorage.getItem("token");
-        const response = await fetch("https://api.spotify.com/v1/me", {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        });
-        const data = await response.json();
-        setUserProfile(data);
+        const profile = await fetchProfile();
+        setUserProfile(profile);
       } catch (error) {
         console.log(error.message);
       }
     };
-
-    fetchProfile();
+    loadProfile();
   }, []);
 
-  //console.log(userProfile);
-
   useEffect(() => {
-    const fetchRecentlyPlayedTracks = async () => {
+    const loadRecentlyPlayedTracks = async () => {
       try {
-        const accessToken = await AsyncStorage.getItem("token");
-        const { data } = await axios.get(
-          "https://api.spotify.com/v1/me/player/recently-played?limit=6",
-          {
-            headers: { Authorization: `Bearer ${accessToken}` },
-          }
-        );
-        setRecentlyPlayedTracks(data.items);
+        const tracks = await fetchRecentlyPlayedTracks();
+        setRecentlyPlayedTracks(tracks);
       } catch (error) {
         console.log(error.message);
       }
     };
-
-    fetchRecentlyPlayedTracks();
-  }, []);
-  console.log(recentlyPlayedTracks);
-
-  useEffect(() => {
-    const getTopArtists = async () => {
-      const accessToken = await AsyncStorage.getItem("token");
-      try {
-        const type = "artists";
-        const response = await axios({
-          method: "GET",
-          url: `https://api.spotify.com/v1/me/top/${type}`,
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
-        const topArtists = response.data.items;
-        setTopArtists(topArtists);
-      } catch (error) {
-        console.log(error.message);
-      }
-    };
-    getTopArtists();
+    loadRecentlyPlayedTracks();
   }, []);
 
-  console.log(topArtists);
-
   useEffect(() => {
-    const getFeaturedPlaylists = async () => {
+    const loadTopArtists = async () => {
       try {
-        const accessToken = await AsyncStorage.getItem("token");
-        const response = await axios({
-          method: "GET",
-          url: "https://api.spotify.com/v1/browse/featured-playlists",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
-        const featuredPlaylists = response.data.playlists.items;
-        setFeaturedPlaylists(featuredPlaylists);
+        const artists = await getTopArtists();
+        setTopArtists(artists);
       } catch (error) {
         console.log(error.message);
       }
     };
-    getFeaturedPlaylists();
+    loadTopArtists();
   }, []);
-  console.log(featuredPlaylists);
 
   useEffect(() => {
-    const getRecommendations = async () => {
+    const loadFeaturedPlaylists = async () => {
       try {
-        const accessToken = await AsyncStorage.getItem("token");
-        const artistIds = [
-          ...new Set(
-            recentlyPlayedTracks.flatMap((item) =>
-              item.track.artists.map((artist) => artist.id)
-            )
-          ),
-        ];
-        if (artistIds.length === 0) return;
-
-        // random
-        const shuffledArtistIds = artistIds.sort(() => 0.5 - Math.random());
-
-        const seedArtists = shuffledArtistIds.slice(0, 5);
-
-        const response = await axios({
-          method: "GET",
-          url: "https://api.spotify.com/v1/recommendations",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-          params: {
-            seed_artists: seedArtists.join(","),
-            limit: 10,
-            target_popularity: 70,
-          },
-        });
-        setRecommendedTracks(response.data.tracks);
+        const playlists = await getFeaturedPlaylists();
+        setFeaturedPlaylists(playlists);
       } catch (error) {
         console.log(error.message);
       }
     };
-    getRecommendations();
+    loadFeaturedPlaylists();
+  }, []);
+
+  useEffect(() => {
+    const loadRecommendations = async () => {
+      try {
+        const recommendations = await getRecommendations(recentlyPlayedTracks);
+        setRecommendedTracks(recommendations);
+      } catch (error) {
+        console.log(error.message);
+      }
+    };
+    loadRecommendations();
   }, [recentlyPlayedTracks]);
   console.log(recommendedTracks);
 
@@ -170,6 +119,11 @@ const HomeScreen = () => {
         <TouchableOpacity
           style={styles.likedSong}
           onPress={() => {
+            playSong(
+              song.id,
+              "recommendation",
+              recentlyPlayedTracks.map((item) => item.track)
+            );
             navigation.navigate("SongPlayerScreen", { song });
           }}
         >
