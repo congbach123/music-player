@@ -21,7 +21,7 @@ const styles = StyleSheet.create({
     color: tokens.colors.spotify_white,
     fontFamily: tokens.fontFamily.medium,
     fontSize: tokens.fontSize.xs,
-    backgroundColor: tokens.colors.spotify_darkBackground,
+    // backgroundColor: tokens.colors.spotify_darkBackground,
     textAlignVertical: "center",
     lineHeight: 14,
   },
