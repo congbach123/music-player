@@ -43,7 +43,9 @@ export const useSongStore = create((set, get) => ({
       }
 
       const { sound, status } = await Audio.Sound.createAsync(
-        songs[index].url,
+        {
+          uri: songs[index].preview_url,
+        },
         {
           shouldPlay: true,
         }

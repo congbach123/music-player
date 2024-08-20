@@ -7,12 +7,22 @@ import { useSongStore } from "../stores/songStore";
 
 const SongItem = ({ song }) => {
   const navigation = useNavigation();
-  const { playSong } = useSongStore();
+  const { playSong, songs } = useSongStore();
 
-  const handleSongPress = (song) => {
-    // navigation.navigate("SongPlayerScreen", { song });
+  // const handleSongPress = (song) => {
+  //   // navigation.navigate("SongPlayerScreen", { song });
 
-    playSong(song.id - 1);
+  //   playSong(song.id - 1);
+  // };
+
+  const handleSongPress = () => {
+    const songIndex = songs.findIndex((s) => s.id === song.id);
+
+    if (songIndex !== -1) {
+      playSong(songIndex);
+    } else {
+      console.error("Song not found in array");
+    }
   };
 
   return (
