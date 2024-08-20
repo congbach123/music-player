@@ -99,3 +99,28 @@ export const getRecommendations = async (recentlyPlayedTracks) => {
     throw error;
   }
 };
+
+export const getRecommendationForSong = async (song) => {
+  try {
+    const accessToken = await getAccessToken();
+    const artistIds = song.artists.id;
+    if (artistIds.length === 0) return null;
+
+    const response = await axios.get(
+      "https://api.spotify.com/v1/recommendations",
+      {
+        headers: { Authorization: `Bearer ${accessToken}` },
+        params: {
+          seed_artists: artistIds.join(","),
+          limit: 1, // Only one recommendation
+          target_popularity: 70,
+        },
+      }
+    );
+
+    return response.data.tracks[0]; // Return the first (and only) track
+  } catch (error) {
+    console.log(error.message);
+    throw error;
+  }
+};

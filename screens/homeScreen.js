@@ -41,7 +41,7 @@ const HomeScreen = () => {
   const [featuredPlaylists, setFeaturedPlaylists] = useState([]);
   const [recommendedTracks, setRecommendedTracks] = useState([]);
 
-  const { playSong } = useSongStore();
+  const { playSong, addSong } = useSongStore();
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -67,7 +67,7 @@ const HomeScreen = () => {
     };
     loadRecentlyPlayedTracks();
   }, []);
-
+  console.log(recentlyPlayedTracks);
   useEffect(() => {
     const loadTopArtists = async () => {
       try {
@@ -103,7 +103,7 @@ const HomeScreen = () => {
     };
     loadRecommendations();
   }, [recentlyPlayedTracks]);
-  console.log(recommendedTracks);
+  //console.log(recommendedTracks);
 
   const renderItem = ({ item }) => {
     const song = item.track;
@@ -119,11 +119,8 @@ const HomeScreen = () => {
         <TouchableOpacity
           style={styles.likedSong}
           onPress={() => {
-            playSong(
-              song.id,
-              "recommendation",
-              recentlyPlayedTracks.map((item) => item.track)
-            );
+            addSong(song);
+            console.log(song);
             navigation.navigate("SongPlayerScreen", { song });
           }}
         >

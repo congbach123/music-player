@@ -2,7 +2,7 @@
 
 import { create } from "zustand";
 import { Audio } from "expo-av";
-import { getRecommendations } from "../services/apiController"; // hypothetical API methods
+import { getRecommendationForSong } from "../services/apiController"; // hypothetical API methods
 
 export const useSongStore = create((set, get) => ({
   songs: [],
@@ -12,108 +12,46 @@ export const useSongStore = create((set, get) => ({
   playbackInstance: null,
   status: null,
 
-  playSong: async (songId, context = "default", playlistId = null) => {
-    const { playbackInstance, songs } = get();
+  playSong: async (index) => {
+    const { songs, playbackInstance } = get();
 
     try {
       if (playbackInstance) {
         await playbackInstance.unloadAsync();
       }
 
-      let updatedSongs = songs;
-      // if (context === "playlist" && playlistId) {
-      //   updatedSongs = await getPlaylistItems(playlistId);
-      // } else
-      if (context === "recommendation") {
-        updatedSongs = [];
-        const recommendations = await getRecommendations(songId);
-        updatedSongs.push(
-          recommendations.previous,
-          recommendations.current,
-          recommendations.next
-        );
-      }
-
-      const songIndex = updatedSongs.findIndex((song) => song.id === songId);
-
       const { sound, status } = await Audio.Sound.createAsync(
-        updatedSongs[songIndex].url,
+        songs[index].url,
         {
           shouldPlay: true,
         }
       );
 
       sound.setOnPlaybackStatusUpdate((status) => {
+        console.log("this runs");
         if (status.didJustFinish) {
-          const { currentSongIndex, context } = get();
-          const nextIndex = currentSongIndex + 1;
-
-          if (context === "playlist") {
-            get().playSong(updatedSongs[nextIndex].id, "playlist", playlistId);
-          } else if (context === "recommendation") {
-            if (nextIndex >= updatedSongs.length) {
-              get().addRecommendation("right");
-            } else {
-              get().playSong(updatedSongs[nextIndex].id, "recommendation");
-            }
-          }
+          const nextIndex =
+            currentSongIndex + 1 >= songs.length ? 0 : currentSongIndex + 1;
+          playSong(nextIndex);
+          console.log("this runs2");
         }
       });
 
       set({
         playbackInstance: sound,
-        currentSongIndex: songIndex,
+        currentSongIndex: index,
         isPlaying: true,
-        songs: updatedSongs,
-        context,
       });
     } catch (error) {
       console.error("Error playing song:", error);
     }
   },
 
-  addRecommendation: async (side = "right") => {
-    const { songs, currentSongIndex } = get();
-    const currentSong = songs[currentSongIndex];
-    const recommendations = await getRecommendations(currentSong.id);
+  addSong: (song) => {
+    const { songs } = get();
+    const updatedSongs = [...songs, song];
 
-    if (side === "right") {
-      songs.push(recommendations.next);
-    } else {
-      songs.unshift(recommendations.previous);
-      set({ currentSongIndex: currentSongIndex + 1 });
-    }
-
-    if (songs.length > 100) {
-      const trimmedSongs = [
-        songs[currentSongIndex - 1],
-        songs[currentSongIndex],
-        songs[currentSongIndex + 1],
-      ];
-      set({ songs: trimmedSongs, currentSongIndex: 1 });
-    } else {
-      set({ songs });
-    }
-  },
-
-  nextSong: () => {
-    const { currentSongIndex, songs, playSong, context } = get();
-    const nextIndex = currentSongIndex + 1;
-    if (nextIndex >= songs.length && context === "recommendation") {
-      get().addRecommendation("right");
-    } else {
-      playSong(songs[nextIndex].id, context);
-    }
-  },
-
-  previousSong: () => {
-    const { currentSongIndex, songs, playSong, context } = get();
-    const prevIndex = currentSongIndex - 1;
-    if (prevIndex < 0 && context === "recommendation") {
-      get().addRecommendation("left");
-    } else {
-      playSong(songs[prevIndex].id, context);
-    }
+    set({ songs: updatedSongs }, () => {});
   },
 
   pauseSong: async () => {
@@ -140,11 +78,22 @@ export const useSongStore = create((set, get) => ({
       set({ playbackInstance: null, currentSongIndex: -1, isPlaying: false });
     }
   },
+  nextSong: () => {
+    const { currentSongIndex, songs, playSong } = get();
+    const nextIndex =
+      currentSongIndex + 1 >= songs.length ? 0 : currentSongIndex + 1;
+    playSong(nextIndex);
+  },
 
+  previousSong: () => {
+    const { currentSongIndex, songs, playSong } = get();
+    const prevIndex =
+      currentSongIndex - 1 < 0 ? songs.length - 1 : currentSongIndex - 1;
+    playSong(prevIndex);
+  },
   getCurrentSong: () => {
     const { currentSongIndex, songs } = get();
     return currentSongIndex !== -1 ? songs[currentSongIndex] : null;
   },
-
   setStatus: (status) => set({ status }),
 }));

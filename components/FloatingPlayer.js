@@ -25,7 +25,7 @@ export const FloatingPlayer = () => {
   //   getCurrentSong: state.getCurrentSong,
   // })
 
-  const [visible, setVisible] = useState(true);
+  const [visible, setVisible] = useState(true); //before this was true
   // const [status, setStatus] = useState(null);
   useEffect(() => {
     console.log("FloatingPlayer is rendered");
