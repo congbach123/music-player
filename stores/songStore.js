@@ -5,7 +5,29 @@ import { Audio } from "expo-av";
 import { getRecommendationForSong } from "../services/apiController"; // hypothetical API methods
 
 export const useSongStore = create((set, get) => ({
-  songs: [],
+  songs: [
+    // {
+    //   id: 1,
+    //   name: "LẦN CUỐI (đi bên em xót xa người ơi)",
+    //   artist: "Ngọt",
+    //   image: "https://i.scdn.co/image/ab6761610000e5eb66e0a040a53996e8bf19f9b5",
+    //   url: require("../assets/songs/song-1.mp3"),
+    // },
+    // {
+    //   id: 2,
+    //   name: "Vùng Kí Ức",
+    //   artist: "Chillies",
+    //   image: "https://i.scdn.co/image/ab6761610000e5ebae678a70cd3899b2167026ea",
+    //   url: require("../assets/songs/song-2.mp3"),
+    // },
+    // {
+    //   id: 3,
+    //   name: "Anh Đã Ổn Hơn",
+    //   artist: "MCK",
+    //   image: "https://i.scdn.co/image/ab6761610000e5ebb97791c136d7354ad7792555",
+    //   url: require("../assets/songs/song-3.mp3"),
+    // },
+  ],
 
   currentSongIndex: -1,
   isPlaying: false,
@@ -47,11 +69,10 @@ export const useSongStore = create((set, get) => ({
     }
   },
 
-  addSong: (song) => {
-    const { songs } = get();
-    const updatedSongs = [...songs, song];
-
-    set({ songs: updatedSongs }, () => {});
+  addSong: (newSong) => {
+    set((state) => ({
+      songs: [...state.songs, newSong],
+    }));
   },
 
   pauseSong: async () => {

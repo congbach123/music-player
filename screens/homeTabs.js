@@ -10,6 +10,7 @@ import ArtistScreen from "./artist";
 import { FloatingPlayer } from "../components/FloatingPlayer";
 import { View } from "react-native";
 import HomeScreen from "./homeScreen";
+import { useSongStore } from "../stores/songStore";
 
 const Tab = createBottomTabNavigator();
 
@@ -22,6 +23,7 @@ const iconMap = {
 };
 
 const HomeTabs = () => {
+  const isPlaying = useSongStore((state) => state.isPlaying);
   return (
     <View style={{ flex: 1 }}>
       <Tab.Navigator
@@ -43,7 +45,7 @@ const HomeTabs = () => {
         <Tab.Screen name="Artist" component={ArtistScreen} />
       </Tab.Navigator>
 
-      <FloatingPlayer />
+      {isPlaying && <FloatingPlayer />}
     </View>
   );
 };

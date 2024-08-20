@@ -18,7 +18,10 @@ const SongItem = ({ song }) => {
   return (
     <TouchableOpacity onPress={() => handleSongPress(song)}>
       <View style={styles.container}>
-        <Image source={{ uri: song.image }} style={styles.image} />
+        <Image
+          source={{ uri: song.album.images[0]?.url }}
+          style={styles.image}
+        />
         <View style={styles.info}>
           <Text style={styles.name}>{song.name}</Text>
           <Text style={styles.artist}>{song.artist}</Text>

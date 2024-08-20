@@ -10,16 +10,25 @@ import { pause } from "react-native-track-player/lib/src/trackPlayer";
 
 export const FloatingPlayer = () => {
   const navigation = useNavigation();
-  const {
-    isPlaying,
-    getCurrentSong,
-    playbackInstance,
-    status,
-    setStatus,
-    pauseSong,
-    resumeSong,
-    nextSong,
-  } = useSongStore();
+  // const {
+  //   isPlaying,
+  //   getCurrentSong,
+  //   playbackInstance,
+  //   status,
+  //   setStatus,
+  //   pauseSong,
+  //   resumeSong,
+  //   nextSong,
+  // } = useSongStore();
+  const isPlaying = useSongStore((state) => state.isPlaying);
+  const getCurrentSong = useSongStore((state) => state.getCurrentSong);
+  const playbackInstance = useSongStore((state) => state.playbackInstance);
+  const status = useSongStore((state) => state.status);
+  const setStatus = useSongStore((state) => state.setStatus);
+  const pauseSong = useSongStore((state) => state.pauseSong);
+  const resumeSong = useSongStore((state) => state.resumeSong);
+  const nextSong = useSongStore((state) => state.nextSong);
+
   // (state) => ({
   //   isPlaying: state.isPlaying,
   //   getCurrentSong: state.getCurrentSong,

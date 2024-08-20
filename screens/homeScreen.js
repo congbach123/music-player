@@ -67,7 +67,7 @@ const HomeScreen = () => {
     };
     loadRecentlyPlayedTracks();
   }, []);
-  console.log(recentlyPlayedTracks);
+
   useEffect(() => {
     const loadTopArtists = async () => {
       try {
@@ -103,7 +103,7 @@ const HomeScreen = () => {
     };
     loadRecommendations();
   }, [recentlyPlayedTracks]);
-  //console.log(recommendedTracks);
+  console.log(recommendedTracks);
 
   const renderItem = ({ item }) => {
     const song = item.track;
@@ -119,9 +119,9 @@ const HomeScreen = () => {
         <TouchableOpacity
           style={styles.likedSong}
           onPress={() => {
-            addSong(song);
-            console.log(song);
-            navigation.navigate("SongPlayerScreen", { song });
+            // console.log("Song added to queue", song);
+            // addSong(song);
+            //navigation.navigate("SongPlayerScreen", { song });
           }}
         >
           <Image

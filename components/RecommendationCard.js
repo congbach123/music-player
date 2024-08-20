@@ -1,10 +1,17 @@
 import React from "react";
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import * as tokens from "../styles/tokens";
+import { useSongStore } from "../stores/songStore";
 
 const RecommendationCard = ({ recommendation }) => {
+  const { addSong, getCurrentSong, playSong, songs } = useSongStore();
+  const handlePress = () => {
+    console.log("RecommendationCard pressed");
+    addSong(recommendation);
+    console.log(songs);
+  };
   return (
-    <TouchableOpacity style={styles.card}>
+    <TouchableOpacity style={styles.card} onPress={handlePress}>
       <Image
         style={styles.image}
         source={{ uri: recommendation.album.images[0]?.url }}
