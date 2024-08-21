@@ -82,18 +82,41 @@ export const getRecommendations = async (recentlyPlayedTracks) => {
 
     const seedArtists = shuffledArtistIds.slice(0, 5);
 
-    const response = await axios.get(
-      "https://api.spotify.com/v1/recommendations",
-      {
-        headers: { Authorization: `Bearer ${accessToken}` },
-        params: {
-          seed_artists: seedArtists.join(","),
-          limit: 10,
-          target_popularity: 70,
-        },
-      }
-    );
-    return response.data.tracks;
+    // const response = await axios.get(
+    //   "https://api.spotify.com/v1/recommendations",
+    //   {
+    //     headers: { Authorization: `Bearer ${accessToken}` },
+    //     params: {
+    //       seed_artists: seedArtists.join(","),
+    //       limit: 10,
+    //       target_popularity: 70,
+    //     },
+    //   }
+    // );
+    // return response.data.tracks
+    let allTracks = [];
+
+    while (allTracks.length < 10) {
+      const response = await axios.get(
+        "https://api.spotify.com/v1/recommendations",
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+          params: {
+            seed_artists: seedArtists.join(","),
+            limit: 10,
+            target_popularity: 70,
+          },
+        }
+      );
+
+      const tracksWithPreviewUrl = response.data.tracks.filter(
+        (track) => track.preview_url !== null
+      );
+
+      allTracks = [...allTracks, ...tracksWithPreviewUrl];
+    }
+
+    return allTracks.slice(0, 10);
   } catch (error) {
     console.log(error.message);
     throw error;

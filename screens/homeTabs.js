@@ -45,7 +45,7 @@ const HomeTabs = () => {
         <Tab.Screen name="Artist" component={ArtistScreen} />
       </Tab.Navigator>
 
-      {isPlaying && <FloatingPlayer />}
+      <FloatingPlayer />
     </View>
   );
 };
