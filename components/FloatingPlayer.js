@@ -9,6 +9,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { pause } from "react-native-track-player/lib/src/trackPlayer";
 
 export const FloatingPlayer = () => {
+  //const unknownTrackImageUri = require("../assets/unknownImage.jpg");
   const navigation = useNavigation();
   // const {
   //   isPlaying,
@@ -79,7 +80,9 @@ export const FloatingPlayer = () => {
       style={styles.container}
     >
       <Image
-        source={{ uri: displayedTrack.image ?? unknownTrackImageUri }}
+        source={{
+          uri: displayedTrack.album.images[0]?.url ?? unknownTrackImageUri,
+        }}
         style={styles.trackArtworkImage}
       />
 
