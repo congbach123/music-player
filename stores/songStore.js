@@ -71,7 +71,7 @@ export const useSongStore = create((set, get) => ({
     }
   },
 
-  addSong: (newSong) => {
+  addSong: async (newSong) => {
     set((state) => ({
       songs: [...state.songs, newSong],
     }));

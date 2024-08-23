@@ -216,7 +216,7 @@ const HomeScreen = () => {
             </View>
           </ScrollView>
 
-          <Text style={styles.sectionText}>Our Recommendation</Text>
+          {/* <Text style={styles.sectionText}>Our Recommendation</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             <View style={styles.horizontalList}>
               {recommendedTracks.map((recommendation) => (
@@ -226,7 +226,7 @@ const HomeScreen = () => {
                 />
               ))}
             </View>
-          </ScrollView>
+          </ScrollView> */}
         </View>
       </ScrollView>
     </SafeAreaView>

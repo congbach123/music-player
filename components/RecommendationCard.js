@@ -4,11 +4,15 @@ import * as tokens from "../styles/tokens";
 import { useSongStore } from "../stores/songStore";
 
 const RecommendationCard = ({ recommendation }) => {
-  const { addSong, getCurrentSong, playSong, songs } = useSongStore();
+  const { addSong, getCurrentSong, playSong } = useSongStore();
+
   const handlePress = () => {
-    console.log("RecommendationCard pressed");
+    //console.log("RecommendationCard pressed");
     addSong(recommendation);
-    console.log(songs);
+    const songs = useSongStore.getState().songs;
+    const songIndex = songs.findIndex((s) => s.id === recommendation.id);
+    playSong(songIndex);
+    //console.log(songs);
   };
   return (
     <TouchableOpacity style={styles.card} onPress={handlePress}>

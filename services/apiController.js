@@ -79,22 +79,10 @@ export const getRecommendations = async (recentlyPlayedTracks) => {
     if (artistIds.length === 0) return [];
 
     const shuffledArtistIds = artistIds.sort(() => 0.5 - Math.random());
-
     const seedArtists = shuffledArtistIds.slice(0, 5);
 
-    // const response = await axios.get(
-    //   "https://api.spotify.com/v1/recommendations",
-    //   {
-    //     headers: { Authorization: `Bearer ${accessToken}` },
-    //     params: {
-    //       seed_artists: seedArtists.join(","),
-    //       limit: 10,
-    //       target_popularity: 70,
-    //     },
-    //   }
-    // );
-    // return response.data.tracks
     let allTracks = [];
+    const trackIds = new Set(); // Set to track unique IDs
 
     while (allTracks.length < 10) {
       const response = await axios.get(
@@ -103,17 +91,23 @@ export const getRecommendations = async (recentlyPlayedTracks) => {
           headers: { Authorization: `Bearer ${accessToken}` },
           params: {
             seed_artists: seedArtists.join(","),
-            limit: 10,
+            limit: 20,
             target_popularity: 70,
           },
         }
       );
 
       const tracksWithPreviewUrl = response.data.tracks.filter(
-        (track) => track.preview_url !== null
+        (track) => track.preview_url !== null && !trackIds.has(track.id)
       );
 
-      allTracks = [...allTracks, ...tracksWithPreviewUrl];
+      // Add the filtered tracks to the results and update the Set of IDs
+      tracksWithPreviewUrl.forEach((track) => {
+        if (!trackIds.has(track.id)) {
+          allTracks.push(track);
+          trackIds.add(track.id);
+        }
+      });
     }
 
     return allTracks.slice(0, 10);
