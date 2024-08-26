@@ -102,8 +102,8 @@ const HomeScreen = () => {
       }
     };
     loadRecommendations();
-  }, [recentlyPlayedTracks]);
-  console.log(recommendedTracks);
+  }, [recentlyPlayedTracks]); // recently play track
+  //console.log(recommendedTracks);
 
   const renderItem = ({ item }) => {
     const song = item.track;

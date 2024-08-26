@@ -16,6 +16,7 @@ import TopNavigationBar from "../components/TopNavigationBar";
 import { useSongStore } from "../stores/songStore";
 import * as tokens from "../styles/tokens";
 import { Ionicons } from "@expo/vector-icons";
+import { getArtist } from "../services/apiController";
 
 const formatTime = (millis) => {
   const minutes = Math.floor(millis / 60000);
@@ -40,6 +41,16 @@ const SongPlayerScreen = () => {
     setStatus,
   } = useSongStore();
   // const [status, setStatus] = useState(null);
+
+  const [artist, setArtist] = useState(null);
+
+  useEffect(() => {
+    const loadArtist = async () => {
+      const artist = await getArtist(song.artists[0].id);
+      setArtist(artist);
+    };
+    loadArtist();
+  }, [song]);
 
   useEffect(() => {
     const currentSong = getCurrentSong();
@@ -106,14 +117,17 @@ const SongPlayerScreen = () => {
       <TopNavigationBar title="Now Playing" />
       <View style={styles.content}>
         <View style={styles.imageContainer}>
-          <Image source={{ uri: currentSong.image }} style={styles.image} />
+          <Image
+            source={{ uri: currentSong.album.images[0]?.url }}
+            style={styles.image}
+          />
         </View>
         <View style={styles.textContainer}>
           <Text style={styles.title} numberOfLines={1} ellipsizeMode="tail">
             {currentSong.name}
           </Text>
           <Text style={styles.artist} numberOfLines={1}>
-            {currentSong.artist}
+            {artist?.name}
           </Text>
         </View>
         <View style={styles.sliderContainer}>

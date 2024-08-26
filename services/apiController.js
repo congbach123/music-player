@@ -141,3 +141,19 @@ export const getRecommendationForSong = async (song) => {
     throw error;
   }
 };
+
+export const getArtist = async (artistId) => {
+  try {
+    const accessToken = await getAccessToken();
+    const response = await axios.get(
+      `https://api.spotify.com/v1/artists/${artistId}`,
+      {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.log(error.message);
+    throw error;
+  }
+};

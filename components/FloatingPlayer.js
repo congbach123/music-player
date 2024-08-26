@@ -7,6 +7,7 @@ import * as tokens from "../styles/tokens";
 import transparentThumb from "../assets/thumb.png";
 import { Ionicons } from "@expo/vector-icons";
 import { pause } from "react-native-track-player/lib/src/trackPlayer";
+import { getArtist } from "../services/apiController";
 
 export const FloatingPlayer = () => {
   //const unknownTrackImageUri = require("../assets/unknownImage.jpg");
@@ -37,6 +38,17 @@ export const FloatingPlayer = () => {
 
   const [visible, setVisible] = useState(true); //before this was true
   // const [status, setStatus] = useState(null);
+
+  const [artist, setArtist] = useState(null);
+
+  useEffect(() => {
+    const loadArtist = async () => {
+      const artist = await getArtist(displayedTrack.artists[0].id);
+      setArtist(artist);
+    };
+    loadArtist();
+  }, [displayedTrack]);
+
   useEffect(() => {
     console.log("FloatingPlayer is rendered");
   }, []);
@@ -91,7 +103,7 @@ export const FloatingPlayer = () => {
           {displayedTrack.name ?? "Unknown Track"}
         </Text>
         <Text style={styles.trackArtist}>
-          {displayedTrack.artist ?? "Unknown Track"}
+          {artist?.name ?? "Unknown Track"}
         </Text>
       </View>
 
